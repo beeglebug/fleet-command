@@ -29204,11 +29204,40 @@ module.exports = {
 
 },{}],136:[function(require,module,exports){
 var PIXI = require('pixi.js');
-var inc = require('./test.js');
 
-console.log(inc(1));
-},{"./test.js":137,"pixi.js":102}],137:[function(require,module,exports){
-module.exports = function(num) {
-  return num + 3;
-};
-},{}]},{},[136]);
+var renderer = new PIXI.WebGLRenderer(860, 540);
+
+document.body.appendChild(renderer.view);
+
+var stage = new PIXI.Container();
+
+var test = new PIXI.Graphics();
+
+test.beginFill(0xf1c40f);
+
+test.drawPolygon([
+  0, 0,
+  12, 32,
+  0, 28,
+  -12, 32,
+]);
+
+test.endFill();
+
+test.position.set(100,100);
+
+stage.addChild(test);
+
+console.log(test);
+
+function animate() {
+
+  requestAnimationFrame(animate);
+
+  test.rotation += 0.01;
+
+  renderer.render(stage);
+}
+
+animate();
+},{"pixi.js":102}]},{},[136]);
