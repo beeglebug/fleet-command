@@ -29205,39 +29205,69 @@ module.exports = {
 },{}],136:[function(require,module,exports){
 var PIXI = require('pixi.js');
 
+function generate() {
+
+  var sprite = new PIXI.Graphics();
+
+  var yellow = 0xf1c40f;
+
+  sprite.beginFill(yellow);
+
+  sprite.drawPolygon([
+    0, 0,
+    12, 32,
+    0, 28,
+    -12, 32,
+  ]);
+
+  sprite.endFill();
+
+  return sprite;
+}
+
+module.exports = {
+  generate: generate
+};
+},{"pixi.js":102}],137:[function(require,module,exports){
+var PIXI = require('pixi.js');
+
 var renderer = new PIXI.WebGLRenderer(860, 540);
 
 document.body.appendChild(renderer.view);
 
 var stage = new PIXI.Container();
 
-var test = new PIXI.Graphics();
+var ShipGenerator = require('./ShipGenerator.js');
 
-test.beginFill(0xf1c40f);
+var ship = ShipGenerator.generate();
 
-test.drawPolygon([
-  0, 0,
-  12, 32,
-  0, 28,
-  -12, 32,
-]);
+ship.position.set(100,100);
 
-test.endFill();
+stage.addChild(ship);
 
-test.position.set(100,100);
 
-stage.addChild(test);
+var orbit = new PIXI.Graphics();
 
-console.log(test);
+var gray = 0x555555;
+
+orbit.lineStyle(2, gray);
+
+orbit.drawCircle(0,0, 100);
+
+stage.addChild(orbit);
+
+
+
+
 
 function animate() {
 
-  requestAnimationFrame(animate);
+//  requestAnimationFrame(animate);
 
-  test.rotation += 0.01;
+//  ship.rotation += 0.01;
 
   renderer.render(stage);
 }
 
 animate();
-},{"pixi.js":102}]},{},[136]);
+},{"./ShipGenerator.js":136,"pixi.js":102}]},{},[137]);
