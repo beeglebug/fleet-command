@@ -1,25 +1,25 @@
-var PIXI = require('pixi.js');
+var THREE = require('three');
 
-function generate() {
+var ShipGenerator = {
 
-  var sprite = new PIXI.Graphics();
+  generate: function () {
 
-  var yellow = 0xf1c40f;
+    var material = new THREE.LineBasicMaterial({ color: 0xffaa00, linewidth: 1 });
+    var geometry = new THREE.Geometry();
 
-  sprite.beginFill(yellow);
+    geometry.vertices = [
+      new THREE.Vector3(0, -2, 0),
+      new THREE.Vector3(1, 2, 0),
+      new THREE.Vector3(0, 1.5, 0),
+      new THREE.Vector3(-1, 2, 0),
+      new THREE.Vector3(0, -2, 0)
+    ];
 
-  sprite.drawPolygon([
-    0, 0,
-    12, 32,
-    0, 28,
-    -12, 32,
-  ]);
+    geometry.computeLineDistances();
 
-  sprite.endFill();
+    return new THREE.Line(geometry, material);
+  }
 
-  return sprite;
-}
-
-module.exports = {
-  generate: generate
 };
+
+module.exports = ShipGenerator;

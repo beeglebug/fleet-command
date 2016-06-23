@@ -41873,68 +41873,139 @@ THREE.MorphBlendMesh.prototype.update = function ( delta ) {
 
 
 },{}],2:[function(require,module,exports){
-//var pixi = require('./pixi.js');
-var three = require('./three.js');
-},{"./three.js":3}],3:[function(require,module,exports){
 var THREE = require('three');
 
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+var ShipGenerator = {
+
+  generate: function () {
+
+    var material = new THREE.LineBasicMaterial({ color: 0xffaa00, linewidth: 1 });
+    var geometry = new THREE.Geometry();
+
+    geometry.vertices = [
+      new THREE.Vector3(0, -2, 0),
+      new THREE.Vector3(1, 2, 0),
+      new THREE.Vector3(0, 1.5, 0),
+      new THREE.Vector3(-1, 2, 0),
+      new THREE.Vector3(0, -2, 0)
+    ];
+
+    geometry.computeLineDistances();
+
+    return new THREE.Line(geometry, material);
+  }
+
+};
+
+module.exports = ShipGenerator;
+},{"three":1}],3:[function(require,module,exports){
+var THREE = require('three');
 
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+
 camera.position.set(0, 0, 100);
-camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+var target = new THREE.Vector3(0, 0, 0);
+
+camera.lookAt(target);
+
+module.exports = camera;
+
+},{"three":1}],4:[function(require,module,exports){
+var THREE = require('three');
+var renderer = require('./renderer.js');
+var camera = require('./camera.js');
+var ShipGenerator = require('./ShipGenerator.js');
 
 var scene = new THREE.Scene();
 
-var shipMaterial = new THREE.LineBasicMaterial({ color: 0xffaa00, linewidth : 1 });
-var shipGeometry = new THREE.Geometry();
-shipGeometry.vertices.push(new THREE.Vector3(0, -2, 0));
-shipGeometry.vertices.push(new THREE.Vector3(1, 2, 0));
-shipGeometry.vertices.push(new THREE.Vector3(0, 1.5, 0));
-shipGeometry.vertices.push(new THREE.Vector3(-1, 2, 0));
-shipGeometry.vertices.push(new THREE.Vector3(0, -2, 0));
+var ship = ShipGenerator.generate();
 
-shipGeometry.computeLineDistances();
+scene.add(ship);
 
-var shipMesh = new THREE.Line(shipGeometry, shipMaterial);
-scene.add(shipMesh);
-
-var pathMaterial = new THREE.LineDashedMaterial( { color: 0x555555, dashSize: 1, gapSize: 1 } );
+var pathMaterial = new THREE.LineDashedMaterial({ color: 0x555555, dashSize: 1, gapSize: 1 });
 var pathGeometry = new THREE.Geometry();
 pathGeometry.vertices.push(new THREE.Vector3(0, -100, 0));
 pathGeometry.vertices.push(new THREE.Vector3(0, 100, 0));
-
 pathGeometry.computeLineDistances();
-
 var pathMesh = new THREE.Line(pathGeometry, pathMaterial);
+
 scene.add(pathMesh);
 
-var curveMaterial = new THREE.LineBasicMaterial( { color: 0x54878F, linewidth: 1 } );
-var curve = new THREE.QuadraticBezierCurve3(
-  new THREE.Vector3(0, 0, 0),
-  new THREE.Vector3(-2, -18, 0),
-  new THREE.Vector3(-40, -40, 0)
-);
-var curvePath = new THREE.CurvePath();
-curvePath.add(curve);
+var geometry;
 
-var curveMesh = new THREE.Line(curvePath.createPointsGeometry(20), curveMaterial);
-scene.add(curveMesh);
+geometry = new THREE.CircleGeometry(20, 64);
+geometry.vertices.shift();
+var orbit = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x555555 }));
 
+geometry = new THREE.CircleGeometry(5, 32);
+geometry.vertices.shift();
+var planetMesh = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xEA4C2A }));
 
-function animate() {
-  requestAnimationFrame( animate );
+scene.add(orbit);
+scene.add(planetMesh);
 
-  camera.rotation.z += 0.005;
+var Body = function() {
+  this.position = new THREE.Vector3();
+  this.velocity = new THREE.Vector3();
+  this.mass = 1;
+};
 
-  render();
+var sun = new Body();
+var planet = new Body();
+
+sun.mass = 10;
+planet.position.y = 20;
+planet.velocity.y = 0;
+
+var GRAVITY = 6.6742e-11;
+
+function updateOrbit(planet, sun, delta) {
+
+    var distance = planet.position.sub(sun.position);
+
+    var force = distance.multiplyScalar(delta * (GRAVITY * invSumCube(distance)));
+
+    // update velocity with gravitational acceleration
+    planet.velocity.add(force);
+
+    // update position with velocity
+    planet.position.x += planet.velocity.x * delta;
+    planet.position.y += planet.velocity.y * delta;
+    planet.position.z += planet.velocity.z * delta;
 }
 
-function render() {
+function invSumCube(vector) {
+  return Math.pow(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z, -1.5);
+}
+
+var clock = new THREE.Clock();
+
+function loop() {
+  requestAnimationFrame(loop);
+  var delta = clock.getDelta();
+  update(delta);
+  render(delta);
+}
+
+function update(delta) {
+  updateOrbit(planet, sun, delta);
+  planetMesh.position.copy(planet.position);
+}
+
+function render(delta) {
   renderer.render( scene, camera );
 }
 
-animate();
-},{"three":1}]},{},[2]);
+requestAnimationFrame(loop);
+},{"./ShipGenerator.js":2,"./camera.js":3,"./renderer.js":5,"three":1}],5:[function(require,module,exports){
+var THREE = require('three');
+
+var renderer = new THREE.WebGLRenderer();
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+document.body.appendChild(renderer.domElement);
+
+module.exports = renderer;
+},{"three":1}]},{},[4]);
