@@ -58,36 +58,27 @@ function updateOrbit(planet, sun, delta) {
     planet.position.z += planet.velocity.z * delta;
 }
 
-function integrate() {
+var temp = new THREE.Vector3();
 
-  var temp = new THREE.Vector3();
+function integrate(body1, body2) {
 
-  world.forEach(function(body1) {
+  var epsilon = 1000;
+  var threshold = 1000;
 
-    world.forEach(function(body2) {
+  var distanceSquared = body1.distanceToSquared(body2);
 
-      if(body1 === body2) {
-        return;
-      }
+  if (body1.mass * body2.mass / distanceSquared < epsilon) {
+    return;
+  }
 
-      var epsilon = 1000;
-      var threshold = 1000;
-      var distanceSquared = body1.distanceToSquared(body2);
+  if (body1.mass > body2.mass + threshold) {
+    return;
+  }
 
-      if (body1.mass * body2.mass / distanceSquared < epsilon) {
-        return;
-      }
+  var strength = GRAVITY * body1.mass * body2.mass / distanceSquared;
+  var force = temp.copy(body1).sub(body2).normalize().multiply(strength);
 
-      if (body1.mass > body2.mass + threshold) {
-        return;
-      }
-
-      var strength = GRAVITY * body1.mass * body2.mass / distanceSquared;
-      var force = temp.copy(body1).sub(body2).normalize().multiply(strength);
-
-      body1.addForce(force);
-    });
-  });
+  body1.addForce(force);
 }
 
 function invSumCube(vector) {
