@@ -1,89 +1,81 @@
 var THREE = require('three');
 var renderer = require('./renderer.js');
 var camera = require('./camera.js');
-var ShipGenerator = require('./ShipGenerator.js');
+var controls = require('./controls.js')(camera);
+var onWindowResize = require('./onWindowResize.js');
 
 var scene = new THREE.Scene();
 
-var ship = ShipGenerator.generate();
+var COLOR = {
+  orbit: 0x333333,
+  body: 0xAAAAAA
+};
 
-scene.add(ship);
+function makeOrbitalBody(bodySize, orbitalDistance) {
 
-var pathMaterial = new THREE.LineDashedMaterial({ color: 0x555555, dashSize: 1, gapSize: 1 });
-var pathGeometry = new THREE.Geometry();
-pathGeometry.vertices.push(new THREE.Vector3(0, -100, 0));
-pathGeometry.vertices.push(new THREE.Vector3(0, 100, 0));
-pathGeometry.computeLineDistances();
-var pathMesh = new THREE.Line(pathGeometry, pathMaterial);
+  var pivot = new THREE.Object3D();
+  var root = new THREE.Object3D();
 
-scene.add(pathMesh);
+  var orbit = makeCircle(orbitalDistance, COLOR.orbit, true);
+  var body = makeCircle(bodySize, COLOR.body);
 
-var geometry;
+  root.position.z = orbitalDistance;
 
-geometry = new THREE.CircleGeometry(20, 64);
-geometry.vertices.shift();
-var orbit = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x555555 }));
+  pivot.add(orbit);
+  pivot.add(root);
 
-geometry = new THREE.CircleGeometry(5, 32);
-geometry.vertices.shift();
-var planetMesh = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xEA4C2A }));
-
-scene.add(orbit);
-scene.add(planetMesh);
-
-
-var sun = new Body();
-var planet = new Body();
-
-var world = [sun, planet];
-
-sun.mass = 10;
-planet.position.y = 20;
-planet.velocity.y = 0;
-
-var GRAVITY = 6.6742e-11;
-
-function updateOrbit(planet, sun, delta) {
-
-    var distance = planet.position.sub(sun.position);
-
-    var force = distance.multiplyScalar(delta * (GRAVITY * invSumCube(distance)));
-
-    // update velocity with gravitational acceleration
-    planet.velocity.add(force);
-
-    // update position with velocity
-    planet.position.x += planet.velocity.x * delta;
-    planet.position.y += planet.velocity.y * delta;
-    planet.position.z += planet.velocity.z * delta;
+  return {
+    pivot, pivot,
+    root, root,
+    body, body,
+    orbit, orbit
+  };
 }
 
-var temp = new THREE.Vector3();
+function makeCircle(size, color, rotate) {
 
-function integrate(body1, body2) {
+  if(rotate === undefined) { rotate = false; }
 
-  var epsilon = 1000;
-  var threshold = 1000;
+  var geometry;
 
-  var distanceSquared = body1.distanceToSquared(body2);
+  geometry = new THREE.CircleGeometry(size, 32);
 
-  if (body1.mass * body2.mass / distanceSquared < epsilon) {
-    return;
+  geometry.vertices.shift();
+
+  var mesh = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: color }));
+
+  if (rotate) {
+    geometry.rotateX(Math.PI / 2);
   }
 
-  if (body1.mass > body2.mass + threshold) {
-    return;
-  }
-
-  var strength = GRAVITY * body1.mass * body2.mass / distanceSquared;
-  var force = temp.copy(body1).sub(body2).normalize().multiply(strength);
-
-  body1.addForce(force);
+  return mesh;
 }
 
-function invSumCube(vector) {
-  return Math.pow(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z, -1.5);
-}
+var sun = new THREE.Object3D();
+scene.add(sun);
+
+var planet = makeOrbitalBody(3, 30);
+sun.add(planet.pivot);
+
+var moon1 = makeOrbitalBody(0.6, 9);
+planet.root.add(moon1.pivot);
+
+var moon2 = makeOrbitalBody(0.6, 6);
+planet.root.add(moon2.pivot);
+
+var container = new THREE.Object3D();
+scene.add(container);
+
+container.add(planet.body);
+container.add(moon1.body);
+container.add(moon2.body);
+
+
+
+
+
+var axisHelper = new THREE.AxisHelper(10);
+scene.add( axisHelper );
 
 var clock = new THREE.Clock();
 
@@ -95,8 +87,20 @@ function loop() {
 }
 
 function update(delta) {
-  updateOrbit(planet, sun, delta);
-  planetMesh.position.copy(planet.position);
+
+  controls.update();
+
+  //planet.pivot.rotation.y += 0.1 * delta;
+  //moon1.pivot.rotation.y += 0.2 * delta;
+  //moon2.pivot.rotation.y += 0.3 * delta;
+
+  planet.body.position.setFromMatrixPosition(planet.root.matrixWorld);
+  moon1.body.position.setFromMatrixPosition(moon1.root.matrixWorld);
+  moon2.body.position.setFromMatrixPosition(moon2.root.matrixWorld);
+
+  planet.body.lookAt(camera.position);
+  moon1.body.lookAt(camera.position);
+  moon2.body.lookAt(camera.position);
 }
 
 function render(delta) {
@@ -104,3 +108,7 @@ function render(delta) {
 }
 
 requestAnimationFrame(loop);
+
+window.addEventListener( 'resize', function() {
+  onWindowResize(camera, renderer); }
+, false);
