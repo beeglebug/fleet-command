@@ -1,43 +1,40 @@
 var THREE = require('three');
 var renderer = require('./renderer.js');
 var camera = require('./camera.js');
-var OrbitControls = require('three-orbit-controls')(THREE);
+var controls = require('./controls.js')(camera);
 var onWindowResize = require('./onWindowResize.js');
 
-var controls = new OrbitControls(camera);
-controls.enableDamping = true;
-controls.dampingFactor = 0.25;
-controls.enableZoom = false;
-
 var scene = new THREE.Scene();
-
-var geometry;
 
 var COLOR = {
   orbit: 0x333333,
   body: 0xAAAAAA
 };
 
-function makeSystem(bodySize, orbitalDistance) {
+function makeOrbitalBody(bodySize, orbitalDistance) {
 
   var pivot = new THREE.Object3D();
+  var root = new THREE.Object3D();
 
-  var orbit = makeCircle(orbitalDistance, COLOR.orbit);
+  var orbit = makeCircle(orbitalDistance, COLOR.orbit, true);
   var body = makeCircle(bodySize, COLOR.body);
 
-  body.position.z = orbitalDistance;
+  root.position.z = orbitalDistance;
 
-  pivot.add(body);
   pivot.add(orbit);
+  pivot.add(root);
 
   return {
     pivot, pivot,
+    root, root,
     body, body,
     orbit, orbit
   };
 }
 
-function makeCircle(size, color) {
+function makeCircle(size, color, rotate) {
+
+  if(rotate === undefined) { rotate = false; }
 
   var geometry;
 
@@ -47,21 +44,37 @@ function makeCircle(size, color) {
 
   var mesh = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: color }));
 
-  geometry.rotateX( Math.PI/2 );
+  if (rotate) {
+    geometry.rotateX(Math.PI / 2);
+  }
 
   return mesh;
 }
 
-var planetSystem = makeSystem(3, 30);
-var moon1System = makeSystem(0.6, 9);
-var moon2System = makeSystem(0.6, 6);
+var sun = new THREE.Object3D();
+scene.add(sun);
+
+var planet = makeOrbitalBody(3, 30);
+sun.add(planet.pivot);
+
+var moon1 = makeOrbitalBody(0.6, 9);
+planet.root.add(moon1.pivot);
+
+var moon2 = makeOrbitalBody(0.6, 6);
+planet.root.add(moon2.pivot);
+
+var container = new THREE.Object3D();
+scene.add(container);
+
+container.add(planet.body);
+container.add(moon1.body);
+container.add(moon2.body);
 
 
-scene.add(planetSystem.pivot);
-planetSystem.body.add(moon1System.pivot);
-planetSystem.body.add(moon2System.pivot);
 
-var axisHelper = new THREE.AxisHelper( 5 );
+
+
+var axisHelper = new THREE.AxisHelper(10);
 scene.add( axisHelper );
 
 var clock = new THREE.Clock();
@@ -74,11 +87,20 @@ function loop() {
 }
 
 function update(delta) {
+
   controls.update();
-  planetSystem.pivot.rotation.y += 0.05 * delta;
-  moon1System.pivot.rotation.y += 0.12 * delta;
-  moon2System.pivot.rotation.y += 0.18 * delta;
-  //moon1System.body.lookAt(camera.position);
+
+  //planet.pivot.rotation.y += 0.1 * delta;
+  //moon1.pivot.rotation.y += 0.2 * delta;
+  //moon2.pivot.rotation.y += 0.3 * delta;
+
+  planet.body.position.setFromMatrixPosition(planet.root.matrixWorld);
+  moon1.body.position.setFromMatrixPosition(moon1.root.matrixWorld);
+  moon2.body.position.setFromMatrixPosition(moon2.root.matrixWorld);
+
+  planet.body.lookAt(camera.position);
+  moon1.body.lookAt(camera.position);
+  moon2.body.lookAt(camera.position);
 }
 
 function render(delta) {
