@@ -2,8 +2,12 @@ var THREE = require('three');
 var renderer = require('./renderer.js');
 var camera = require('./camera.js');
 var OrbitControls = require('three-orbit-controls')(THREE);
+var onWindowResize = require('./onWindowResize.js');
 
 var controls = new OrbitControls(camera);
+controls.enableDamping = true;
+controls.dampingFactor = 0.25;
+controls.enableZoom = false;
 
 var scene = new THREE.Scene();
 
@@ -21,7 +25,7 @@ function makeSystem(bodySize, orbitalDistance) {
   var orbit = makeCircle(orbitalDistance, COLOR.orbit);
   var body = makeCircle(bodySize, COLOR.body);
 
-  body.position.y = orbitalDistance;
+  body.position.z = orbitalDistance;
 
   pivot.add(body);
   pivot.add(orbit);
@@ -41,7 +45,11 @@ function makeCircle(size, color) {
 
   geometry.vertices.shift();
 
-  return new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: color }));
+  var mesh = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: color }));
+
+  geometry.rotateX( Math.PI/2 );
+
+  return mesh;
 }
 
 var planetSystem = makeSystem(3, 30);
@@ -53,6 +61,8 @@ scene.add(planetSystem.pivot);
 planetSystem.body.add(moon1System.pivot);
 planetSystem.body.add(moon2System.pivot);
 
+var axisHelper = new THREE.AxisHelper( 5 );
+scene.add( axisHelper );
 
 var clock = new THREE.Clock();
 
@@ -64,9 +74,11 @@ function loop() {
 }
 
 function update(delta) {
-  planetSystem.pivot.rotation.z += 0.05 * delta;
-  moon1System.pivot.rotation.z += 0.12 * delta;
-  moon2System.pivot.rotation.z += 0.18 * delta;
+  controls.update();
+  planetSystem.pivot.rotation.y += 0.05 * delta;
+  moon1System.pivot.rotation.y += 0.12 * delta;
+  moon2System.pivot.rotation.y += 0.18 * delta;
+  //moon1System.body.lookAt(camera.position);
 }
 
 function render(delta) {
@@ -74,3 +86,7 @@ function render(delta) {
 }
 
 requestAnimationFrame(loop);
+
+window.addEventListener( 'resize', function() {
+  onWindowResize(camera, renderer); }
+, false);
