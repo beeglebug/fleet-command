@@ -4,6 +4,7 @@ var camera = require('./camera.js');
 var controls = require('./controls.js')(camera);
 var onWindowResize = require('./onWindowResize.js');
 var StarField = require('./StarField.js');
+var makePath = require('./path');
 
 var scene = new THREE.Scene();
 
@@ -62,6 +63,21 @@ function makeShip() {
     new THREE.Vector3(0, -2, 0)
   ];
 
+  return new THREE.Line(geometry, material);
+}
+
+function makeSquare() {
+
+  var material = new THREE.LineBasicMaterial({ color: 0xffaa00 });
+  var geometry = new THREE.Geometry();
+
+  geometry.vertices = [
+    new THREE.Vector3(-1, -1, 0),
+    new THREE.Vector3(1, -1, 0),
+    new THREE.Vector3(1, 1, 0),
+    new THREE.Vector3(-1, 1, 0),
+    new THREE.Vector3(-1, -1, 0)
+  ];
 
   return new THREE.Line(geometry, material);
 }
@@ -104,12 +120,21 @@ container.add(planet.body);
 container.add(moon1.body);
 container.add(moon2.body);
 
-
 var ship = makeShip();
-
 container.add(ship);
-
 ship.position.x = 42;
+
+var square = makeSquare();
+container.add(square);
+square.position.x = -35;
+square.position.z = -35;
+
+var path = makePath(
+  square.position.clone(),
+  new THREE.Vector3(0, 0, 0)
+);
+
+container.add(path);
 
 var axisHelper = new THREE.AxisHelper(10);
 scene.add( axisHelper );
@@ -127,15 +152,17 @@ function update(delta) {
 
   controls.update();
 
-  //planet.pivot.rotation.y += 0.1 * delta;
-  //moon1.pivot.rotation.y += 0.2 * delta;
-  //moon2.pivot.rotation.y += 0.3 * delta;
+  planet.pivot.rotation.y += 0.1 * delta;
+  moon1.pivot.rotation.y += 0.2 * delta;
+  moon2.pivot.rotation.y += 0.3 * delta;
 
   planet.body.position.setFromMatrixPosition(planet.root.matrixWorld);
   moon1.body.position.setFromMatrixPosition(moon1.root.matrixWorld);
   moon2.body.position.setFromMatrixPosition(moon2.root.matrixWorld);
 
   ship.lookAt(camera.position);
+  square.lookAt(camera.position);
+
   planet.body.lookAt(camera.position);
   moon1.body.lookAt(camera.position);
   moon2.body.lookAt(camera.position);
