@@ -9,6 +9,11 @@ module.exports = function(camera) {
   controls.dampingFactor = 0.25;
   controls.enableZoom = false;
 
+  var quarterPI = Math.PI / 4;
+
+  controls.minPolarAngle = quarterPI;
+  controls.maxPolarAngle = 3*quarterPI;
+
   return controls;
 };
 
