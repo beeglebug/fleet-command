@@ -149,6 +149,10 @@ function loop() {
   render(delta);
 }
 
+var _v1 = new THREE.Vector3();
+var raycaster = new THREE.Raycaster()
+var pickPlane = new THREE.Plane(new THREE.Vector3(0,1,0));
+
 function update(delta) {
 
   controls.update();
@@ -167,6 +171,12 @@ function update(delta) {
   planet.body.lookAt(camera.position);
   moon1.body.lookAt(camera.position);
   moon2.body.lookAt(camera.position);
+
+  raycaster.setFromCamera(Mouse.position, camera);
+  raycaster.ray.intersectPlane(pickPlane, _v1);
+
+  path.geometry.vertices[1].copy(_v1);
+  path.geometry.verticesNeedUpdate = true;
 }
 
 function render(delta) {

@@ -7,11 +7,11 @@ function makePath(v1, v2) {
 
   geometry.vertices = [v1, v2];
 
+  geometry.dynamic = true;
+
   geometry.computeLineDistances();
 
-  var mesh = new THREE.Line(geometry, material);
-
-  return mesh;
+  return new THREE.Line(geometry, material);
 }
 
 module.exports = makePath;
