@@ -5,6 +5,7 @@ var controls = require('./controls.js')(camera);
 var onWindowResize = require('./onWindowResize.js');
 var StarField = require('./StarField.js');
 var makePath = require('./path');
+var Mouse = require('./Mouse');
 
 var scene = new THREE.Scene();
 
@@ -177,3 +178,7 @@ requestAnimationFrame(loop);
 window.addEventListener( 'resize', function() {
   onWindowResize(camera, renderer); }
 , false);
+
+window.addEventListener('mousemove', function(event) {
+  Mouse.update(event);
+}, false);
