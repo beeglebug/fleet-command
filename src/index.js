@@ -3,8 +3,13 @@ var renderer = require('./renderer.js');
 var camera = require('./camera.js');
 var controls = require('./controls.js')(camera);
 var onWindowResize = require('./onWindowResize.js');
+var StarField = require('./StarField.js');
 
 var scene = new THREE.Scene();
+
+var stars = new StarField(1000, 300);
+
+scene.add(stars);
 
 var COLOR = {
   orbit: 0x333333,
