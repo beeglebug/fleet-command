@@ -39,18 +39,6 @@ function makeOrbitalBody(bodySize, orbitalDistance) {
   };
 }
 
-function makeDot() {
-
-  var geometry = new THREE.Geometry();
-  geometry.vertices.push(new THREE.Vector3(0, 0, 0));
-
-  var material = new THREE.PointCloudMaterial( { size: 1, sizeAttenuation: false } );
-
-  var dot = new THREE.PointCloud( geometry, dotMaterial );
-  scene.add( dot );
-
-}
-
 function makeShip() {
 
   var material = new THREE.LineBasicMaterial({ color: 0xffaa00 });
