@@ -52,6 +52,20 @@ var selectable = [square];
 
 var clock = new THREE.Clock();
 
+var selected = null;
+
+function click() {
+
+  if(mouse.hoverObject) {
+    selected = mouse.hoverObject;
+    movementIndicator.visible = true;
+    movementIndicator.snapTo(selected);
+  } else {
+    selected = null;
+    movementIndicator.visible = false;
+  }
+}
+
 function loop() {
   requestAnimationFrame(loop);
   stats.begin();
@@ -80,20 +94,11 @@ function update(delta) {
   moon2.body.lookAt(camera.position);
 
   mouse.updateRaycaster(camera);
-
   mouse.checkHover(selectable);
 
-  if (1 === 2) {
-
-    pickPlane.constant = Selection.current.position.y;
-
-    raycaster.ray.intersectPlane(pickPlane, _v1);
-
-    Selection.path.geometry.vertices[1].copy(_v1);
-    Selection.path.geometry.verticesNeedUpdate = true;
-
-    var distance = Selection.path.geometry.vertices[0].distanceTo(Selection.path.geometry.vertices[1]);
-    Selection.circle.scale.set(distance, distance, distance);
+  if (selected) {
+    var pos = mouse.getPositionAtY(selected.position.y);
+    movementIndicator.update(pos);
   }
 }
 
@@ -103,10 +108,15 @@ function render(delta) {
 
 requestAnimationFrame(loop);
 
-window.addEventListener( 'resize', function() {
-  onWindowResize(camera, renderer); }
-, false);
+window.addEventListener('resize', function() {
+  onWindowResize(camera, renderer);
+}, false);
 
 document.addEventListener('mousemove', function(event) {
   mouse.updateFromMouseMove(event);
+}, false);
+
+
+document.addEventListener('click', function(event) {
+  click();
 }, false);

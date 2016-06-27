@@ -22,6 +22,13 @@ Mouse.prototype.updateRaycaster = function(camera) {
   this.raycaster.setFromCamera(this.position, camera);
 };
 
+Mouse.prototype.getPositionAtY = function(y) {
+
+  this.pickPlane.constant = y;
+
+  return this.raycaster.ray.intersectPlane(this.pickPlane);
+};
+
 Mouse.prototype.checkHover = function(objects) {
 
   var intersects = this.raycaster.intersectObjects(objects);
