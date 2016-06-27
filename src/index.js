@@ -163,6 +163,9 @@ var _v1 = new THREE.Vector3();
 var raycaster = new THREE.Raycaster();
 var pickPlane = new THREE.Plane(new THREE.Vector3(0,1,0));
 
+var selectable = [square];
+var hover;
+
 function update(delta) {
 
   controls.update();
@@ -182,11 +185,31 @@ function update(delta) {
   moon1.body.lookAt(camera.position);
   moon2.body.lookAt(camera.position);
 
+  // may as well always update
+  raycaster.setFromCamera(Mouse.position, camera);
+
+  var intersects = raycaster.intersectObjects(selectable);
+
+  if (intersects.length > 0) {
+
+    // only if it's not already hovering
+    if (hover !== intersects[0].object) {
+      hover = intersects[0].object;
+      hover.material.color.setHex(0xFF00FF);
+    }
+
+  } else {
+
+    if (hover !== null) {
+      hover.material.color.setHex(0xffaa00);
+      hover = null;
+    }
+  }
+
   if (Selection.current) {
 
     pickPlane.constant = Selection.current.position.y;
 
-    raycaster.setFromCamera(Mouse.position, camera);
     raycaster.ray.intersectPlane(pickPlane, _v1);
 
     Selection.path.geometry.vertices[1].copy(_v1);
