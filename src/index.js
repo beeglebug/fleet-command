@@ -10,8 +10,10 @@ var Mouse = require('./Mouse');
 var scene = new THREE.Scene();
 
 var stars = new StarField(1000, 300);
-
 scene.add(stars);
+
+var selected = null;
+
 
 var COLOR = {
   orbit: 0x333333,
@@ -118,17 +120,32 @@ container.add(square);
 square.position.x = -35;
 square.position.z = -35;
 
-var path = makePath(
-  square.position.clone(),
-  new THREE.Vector3(0, 0, 0)
-);
+var Selection = {
 
-var moveCircle = makeCircle(1, 0x444444, true);
+  current: null,
 
-container.add(path);
-container.add(moveCircle);
+  path: makePath(
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 0, 0)
+  ),
 
-moveCircle.position.copy(square.position);
+  circle: makeCircle(1, 0x444444, true),
+
+  set: function(object) {
+
+    this.current = object;
+
+    this.circle.position.copy(this.current.position);
+    this.path.geometry.vertices[0].copy(this.current.position);
+    this.path.geometry.verticesNeedUpdate = true;
+
+  }
+};
+
+container.add(Selection.path);
+container.add(Selection.circle);
+
+//Selection.set(square);
 
 var axisHelper = new THREE.AxisHelper(10);
 scene.add( axisHelper );
@@ -165,14 +182,19 @@ function update(delta) {
   moon1.body.lookAt(camera.position);
   moon2.body.lookAt(camera.position);
 
-  raycaster.setFromCamera(Mouse.position, camera);
-  raycaster.ray.intersectPlane(pickPlane, _v1);
+  if (Selection.current) {
 
-  path.geometry.vertices[1].copy(_v1);
-  path.geometry.verticesNeedUpdate = true;
+    pickPlane.constant = Selection.current.position.y;
 
-  var distance = path.geometry.vertices[0].distanceTo(path.geometry.vertices[1]);
-  moveCircle.scale.set(distance, distance, distance);
+    raycaster.setFromCamera(Mouse.position, camera);
+    raycaster.ray.intersectPlane(pickPlane, _v1);
+
+    Selection.path.geometry.vertices[1].copy(_v1);
+    Selection.path.geometry.verticesNeedUpdate = true;
+
+    var distance = Selection.path.geometry.vertices[0].distanceTo(Selection.path.geometry.vertices[1]);
+    Selection.circle.scale.set(distance, distance, distance);
+  }
 }
 
 function render(delta) {
