@@ -14,7 +14,6 @@
   "devDependencies": {
     "browserify": "^13.0.1",
     "http-server": "^0.9.0",
-    "pixi.js": "^3.0.11",
     "three": "^0.78.0",
     "three-orbit-controls": "^72.0.0",
     "watchify": "^3.7.0"
