@@ -1,22 +1,25 @@
 var THREE = require('three');
 
-var StarField = function(count, size) {
+var StarField = function() {
 
   THREE.Object3D.call(this);
 
-  this.addStars(0xFFFFFF, count / 3, size);
-  this.addStars(0xCCFFCC, count / 3, size);
-  this.addStars(0xCCCCFF, count / 3, size);
+  var count = 300;
+
+  this.addStars(0xFFFFFF, count);
+  this.addStars(0xCCFFCC, count);
+  this.addStars(0xCCCCFF, count);
 };
 
 StarField.prototype = Object.create(THREE.Object3D.prototype);
 StarField.prototype.constructor = StarField.prototype;
 
-StarField.prototype.addStars = function (color, count, size) {
+StarField.prototype.addStars = function (color, count) {
 
   var material = new THREE.PointsMaterial({
     color: color,
-    size: 1
+    size: 1,
+    sizeAttenuation: false
   });
 
   var particles = new THREE.Geometry();
@@ -28,16 +31,13 @@ StarField.prototype.addStars = function (color, count, size) {
     var z = -1 + Math.random() * 2;
 
     var d = 1 / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+    var size = 4000;
 
-    x *= d;
-    y *= d;
-    z *= d;
+    x *= d * size;
+    y *= d * size;
+    z *= d * size;
 
-    var particle = new THREE.Vector3(
-      x * size,
-      y * size,
-      z * size
-    );
+    var particle = new THREE.Vector3(x, y, z);
 
     particles.vertices.push(particle);
   }

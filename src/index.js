@@ -15,14 +15,13 @@ stats.showPanel(0);
 
 document.body.appendChild(stats.dom);
 
-
 var mouse = new Mouse();
 var scene = new THREE.Scene();
 
 var movementIndicator = new MovementIndicator();
 scene.add(movementIndicator);
 
-var stars = new StarField(1000, 300);
+var stars = new StarField();
 scene.add(stars);
 
 var axisHelper = new THREE.AxisHelper(10);
