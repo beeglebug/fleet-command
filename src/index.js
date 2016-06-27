@@ -1,4 +1,5 @@
 var THREE = require('three');
+var Stats = require('stats.js');
 var renderer = require('./renderer.js');
 var camera = require('./camera.js');
 var controls = require('./controls.js')(camera);
@@ -8,6 +9,12 @@ var Mouse = require('./Mouse');
 var MovementIndicator = require('./MovementIndicator.js');
 var makeSquare = require('./mesh/makeSquare.js');
 var makeOrbitalBody = require('./mesh/makeOrbitalBody.js');
+
+var stats = new Stats();
+stats.showPanel(0);
+
+document.body.appendChild(stats.dom);
+
 
 var mouse = new Mouse();
 var scene = new THREE.Scene();
@@ -48,9 +55,11 @@ var clock = new THREE.Clock();
 
 function loop() {
   requestAnimationFrame(loop);
+  stats.begin();
   var delta = clock.getDelta();
   update(delta);
   render(delta);
+  stats.end();
 }
 
 function update(delta) {
