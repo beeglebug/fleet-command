@@ -123,7 +123,12 @@ var path = makePath(
   new THREE.Vector3(0, 0, 0)
 );
 
+var moveCircle = makeCircle(1, 0x444444, true);
+
 container.add(path);
+container.add(moveCircle);
+
+moveCircle.position.copy(square.position);
 
 var axisHelper = new THREE.AxisHelper(10);
 scene.add( axisHelper );
@@ -138,7 +143,7 @@ function loop() {
 }
 
 var _v1 = new THREE.Vector3();
-var raycaster = new THREE.Raycaster()
+var raycaster = new THREE.Raycaster();
 var pickPlane = new THREE.Plane(new THREE.Vector3(0,1,0));
 
 function update(delta) {
@@ -165,6 +170,9 @@ function update(delta) {
 
   path.geometry.vertices[1].copy(_v1);
   path.geometry.verticesNeedUpdate = true;
+
+  var distance = path.geometry.vertices[0].distanceTo(path.geometry.vertices[1]);
+  moveCircle.scale.set(distance, distance, distance);
 }
 
 function render(delta) {
