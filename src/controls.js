@@ -7,7 +7,7 @@ module.exports = function(camera) {
 
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
 
   var quarterPI = Math.PI / 4;
 
