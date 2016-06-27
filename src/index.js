@@ -66,6 +66,18 @@ function click() {
   }
 }
 
+var KEYBOARD = {
+  ESCAPE: 27
+};
+
+function keyDown(key) {
+
+  if (key === KEYBOARD.ESCAPE) {
+    selected = null;
+    movementIndicator.visible = false;
+  }
+}
+
 function loop() {
   requestAnimationFrame(loop);
   stats.begin();
@@ -116,7 +128,10 @@ document.addEventListener('mousemove', function(event) {
   mouse.updateFromMouseMove(event);
 }, false);
 
-
 document.addEventListener('click', function(event) {
   click();
+}, false);
+
+document.addEventListener('keydown', function(event) {
+  keyDown(event.keyCode);
 }, false);
