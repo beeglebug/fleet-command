@@ -4,7 +4,7 @@ var StarField = function() {
 
   THREE.Object3D.call(this);
 
-  this.size = 50000;
+  this.size = 5000000;
 
   this.addStars(0xFFFFFF, 1000);
   this.addStars(0xCCFFAA, 1000);
