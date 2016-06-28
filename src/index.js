@@ -48,7 +48,12 @@ scene.add(square);
 square.position.x = -35;
 square.position.z = -35;
 
-var selectable = [square];
+var square2 = makeSquare();
+scene.add(square2);
+square2.position.x = 55;
+square2.position.z = 50;
+
+var selectable = [square, square2];
 
 var clock = new THREE.Clock();
 
