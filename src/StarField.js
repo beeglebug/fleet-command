@@ -4,11 +4,9 @@ var StarField = function() {
 
   THREE.Object3D.call(this);
 
-  var count = 300;
-
-  this.addStars(0xFFFFFF, count);
-  this.addStars(0xCCFFCC, count);
-  this.addStars(0xCCCCFF, count);
+  this.addStars(0xFFFFFF, 1000);
+  this.addStars(0xCCFFAA, 1000);
+  this.addStars(0xAAAADD, 1000);
 };
 
 StarField.prototype = Object.create(THREE.Object3D.prototype);
