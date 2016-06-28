@@ -1,5 +1,5 @@
 var THREE = require('three');
-var Stats = require('stats.js');
+var stats = require('./stats.js');
 var renderer = require('./renderer.js');
 var camera = require('./camera.js');
 var controls = require('./controls.js')(camera);
@@ -10,13 +10,14 @@ var MovementIndicator = require('./MovementIndicator.js');
 var makeSquare = require('./mesh/makeSquare.js');
 var makeOrbitalBody = require('./mesh/makeOrbitalBody.js');
 
-var stats = new Stats();
-stats.showPanel(0);
 
-document.body.appendChild(stats.dom);
+var SolarSystem = require('./SolarSystem.js');
 
 var mouse = new Mouse();
 var scene = new THREE.Scene();
+
+var solarSystem = new SolarSystem();
+scene.add(solarSystem);
 
 var movementIndicator = new MovementIndicator();
 scene.add(movementIndicator);
