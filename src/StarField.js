@@ -4,6 +4,8 @@ var StarField = function() {
 
   THREE.Object3D.call(this);
 
+  this.size = 50000;
+
   this.addStars(0xFFFFFF, 1000);
   this.addStars(0xCCFFAA, 1000);
   this.addStars(0xAAAADD, 1000);
@@ -29,11 +31,10 @@ StarField.prototype.addStars = function (color, count) {
     var z = -1 + Math.random() * 2;
 
     var d = 1 / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-    var size = 4000;
 
-    x *= d * size;
-    y *= d * size;
-    z *= d * size;
+    x *= d * this.size;
+    y *= d * this.size;
+    z *= d * this.size;
 
     var particle = new THREE.Vector3(x, y, z);
 

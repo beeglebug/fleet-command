@@ -14,8 +14,8 @@ module.exports = function(camera) {
   controls.minPolarAngle = quarterPI;
   controls.maxPolarAngle = 3*quarterPI;
 
-  controls.minDistance = 50;
-  controls.maxDistance = 300;
+  controls.minDistance = 10;
+  controls.maxDistance = 10000;
 
   return controls;
 };
