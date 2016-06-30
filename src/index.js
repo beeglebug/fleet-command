@@ -8,7 +8,6 @@ var StarField = require('./StarField.js');
 var Mouse = require('./Mouse');
 var MovementIndicator = require('./MovementIndicator.js');
 var makeSquare = require('./mesh/makeSquare.js');
-var makeOrbitalBody = require('./mesh/makeOrbitalBody.js');
 var SolarSystem = require('./SolarSystem.js');
 
 var mouse = new Mouse();
@@ -25,22 +24,6 @@ scene.add(stars);
 
 var axisHelper = new THREE.AxisHelper(10);
 scene.add( axisHelper );
-
-//var sun = new THREE.Object3D();
-//scene.add(sun);
-//
-//var planet = makeOrbitalBody(3, 30);
-//sun.add(planet.pivot);
-//
-//var moon1 = makeOrbitalBody(0.6, 9);
-//planet.root.add(moon1.pivot);
-//
-//var moon2 = makeOrbitalBody(0.6, 6);
-//planet.root.add(moon2.pivot);
-//
-//scene.add(planet.body);
-//scene.add(moon1.body);
-//scene.add(moon2.body);
 
 var square = makeSquare();
 scene.add(square);
@@ -75,7 +58,6 @@ var KEYBOARD = {
 };
 
 function keyDown(key) {
-
   if (key === KEYBOARD.ESCAPE) {
     selected = null;
     movementIndicator.visible = false;
@@ -95,20 +77,7 @@ function update(delta) {
 
   controls.update();
 
-  //planet.pivot.rotation.y += 0.1 * delta;
-  //moon1.pivot.rotation.y += 0.2 * delta;
-  //moon2.pivot.rotation.y += 0.3 * delta;
-  //
-  //planet.body.position.setFromMatrixPosition(planet.root.matrixWorld);
-  //moon1.body.position.setFromMatrixPosition(moon1.root.matrixWorld);
-  //moon2.body.position.setFromMatrixPosition(moon2.root.matrixWorld);
-  //
-  //planet.body.lookAt(camera.position);
-  //moon1.body.lookAt(camera.position);
-  //moon2.body.lookAt(camera.position);
-
   square.lookAt(camera.position);
-
 
   mouse.updateRaycaster(camera);
   mouse.checkHover(selectable);
