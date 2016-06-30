@@ -18,6 +18,8 @@ var SolarSystem = function() {
     neptune: new Planet('Neptune', 24766, 1.0244e26, 4498252900)
   };
 
+  this.bodies = {};
+
   var SCALE = 500000;
 
   var key, body, sphere, orbit;
@@ -26,8 +28,9 @@ var SolarSystem = function() {
     body = bodies[key];
     sphere = makeSphere(body.radius / SCALE);
     sphere.position.x = body.distance / SCALE;
-
     orbit = makeCircle(body.distance / SCALE, 0x333333, true);
+
+    this.bodies[body.name] = sphere;
 
     this.add(sphere);
     this.add(orbit);

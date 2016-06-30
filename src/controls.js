@@ -1,22 +1,22 @@
 var THREE = require('three');
 var OrbitControls = require('three-orbit-controls')(THREE);
 
-module.exports = function(camera) {
+var Controls = function(camera) {
 
-  var controls = new OrbitControls(camera);
-
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.25;
-  controls.enableZoom = true;
+  OrbitControls.call(this, camera);
 
   var quarterPI = Math.PI / 4;
 
-  controls.minPolarAngle = quarterPI;
-  controls.maxPolarAngle = 3*quarterPI;
-
-  controls.minDistance = 10;
-  controls.maxDistance = 25000;
-
-  return controls;
+  this.enableDamping = true;
+  this.dampingFactor = 0.25;
+  this.enableZoom = true;
+  this.minPolarAngle = quarterPI;
+  this.maxPolarAngle = 3 * quarterPI;
+  this.minDistance = 10;
+  this.maxDistance = 25000;
 };
 
+Controls.prototype = Object.create(OrbitControls.prototype);
+Controls.prototype.constructor = Controls.prototype;
+
+module.exports = Controls;

@@ -1,8 +1,8 @@
 var THREE = require('three');
 var stats = require('./stats.js');
 var renderer = require('./renderer.js');
-var camera = require('./camera.js');
-var controls = require('./controls.js')(camera);
+var Camera = require('./Camera.js');
+var Controls = require('./controls.js');
 var onWindowResize = require('./onWindowResize.js');
 var StarField = require('./StarField.js');
 var Mouse = require('./Mouse');
@@ -10,6 +10,10 @@ var KEYBOARD = require('./Keyboard.js');
 var MovementIndicator = require('./MovementIndicator.js');
 var makeSquare = require('./mesh/makeSquare.js');
 var SolarSystem = require('./SolarSystem.js');
+
+var camera = new Camera();
+var controls = new Controls(camera);
+camera.controls = controls;
 
 var mouse = new Mouse();
 var scene = new THREE.Scene();
@@ -41,6 +45,11 @@ var selectable = [square, square2];
 var clock = new THREE.Clock();
 
 var selected = null;
+
+window.solarSystem = solarSystem;
+window.camera = camera;
+
+camera.moveToAndLookAt(solarSystem.bodies.Sun);
 
 function click() {
 
