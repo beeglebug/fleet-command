@@ -6,6 +6,7 @@ var controls = require('./controls.js')(camera);
 var onWindowResize = require('./onWindowResize.js');
 var StarField = require('./StarField.js');
 var Mouse = require('./Mouse');
+var KEYBOARD = require('./Keyboard.js');
 var MovementIndicator = require('./MovementIndicator.js');
 var makeSquare = require('./mesh/makeSquare.js');
 var SolarSystem = require('./SolarSystem.js');
@@ -52,10 +53,6 @@ function click() {
     movementIndicator.visible = false;
   }
 }
-
-var KEYBOARD = {
-  ESCAPE: 27
-};
 
 function keyDown(key) {
   if (key === KEYBOARD.ESCAPE) {
