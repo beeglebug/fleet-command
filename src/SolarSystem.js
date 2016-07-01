@@ -20,16 +20,18 @@ var SolarSystem = function() {
 
   this.bodies = {};
 
-  var SCALE = 500000;
+  var SYSTEM_SCALE = 1000000;
+  var PLANET_SCALE = 100;
 
   var key, body, sphere, orbit;
 
   for(key in bodies) {
     body = bodies[key];
-    sphere = makeSphere(body.radius / SCALE);
-    sphere.position.x = body.distance / SCALE;
-    orbit = makeCircle(body.distance / SCALE, 0x333333, true);
+    sphere = makeSphere(body.radius / SYSTEM_SCALE * PLANET_SCALE);
+    sphere.position.x = body.distance / SYSTEM_SCALE;
+    orbit = makeCircle(body.distance / SYSTEM_SCALE, 0x333333, true, 2048);
 
+    sphere.body = body;
     this.bodies[body.name] = sphere;
 
     this.add(sphere);

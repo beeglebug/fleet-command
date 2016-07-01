@@ -12,8 +12,8 @@ var Controls = function(camera) {
   this.enableZoom = true;
   this.minPolarAngle = quarterPI;
   this.maxPolarAngle = 3 * quarterPI;
-  this.minDistance = 10;
-  this.maxDistance = 25000;
+  this.minDistance = 1;
+  this.maxDistance = 20000;
 };
 
 Controls.prototype = Object.create(OrbitControls.prototype);

@@ -2,9 +2,9 @@ var THREE = require('three');
 
 var Camera = function() {
 
-  THREE.PerspectiveCamera.call(this, 45, window.innerWidth / window.innerHeight, 1, 10000000);
+  THREE.PerspectiveCamera.call(this, 45, window.innerWidth / window.innerHeight, 0.1, 400000000);
 
-  this.baseOffset = new THREE.Vector3(25, 25, 100);
+  this.baseOffset = new THREE.Vector3(50, 50, 100);
 
   this.lookAt(new THREE.Vector3());
 
@@ -28,6 +28,8 @@ Camera.prototype.moveToAndLookAt = function(target) {
   this.lookAt(target);
 
   this.controls.target.copy(target.position);
+
+  this.controls.minDistance = target.geometry.boundingSphere.radius * 2;
 };
 
 

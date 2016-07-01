@@ -1,12 +1,13 @@
 var THREE = require('three');
 
-function makeCircle(size, color, rotate) {
+function makeCircle(size, color, rotate, segments) {
 
   if(rotate === undefined) { rotate = false; }
+  if(segments === undefined) { segments = 32; }
 
   var geometry;
 
-  geometry = new THREE.CircleGeometry(size, 32);
+  geometry = new THREE.CircleGeometry(size, segments);
 
   geometry.vertices.shift();
 
