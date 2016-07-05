@@ -23,6 +23,7 @@ var generateMap = function(rng) {
     var r = Math.sqrt(rng.random_long()) * radius;
     point.x += r * Math.cos(angle) * scale;
     point.y += r * Math.sin(angle) * scale;
+    point.z += (rng.random_incl() - 0.5) * 10;
   }
 
   for(i = 1; i < steps; i++) {
