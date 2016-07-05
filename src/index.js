@@ -15,58 +15,65 @@ var camera = new Camera();
 var controls = new Controls(camera);
 camera.controls = controls;
 
+camera.position.set(180,150,100);
+
 var mouse = new Mouse();
 var scene = new THREE.Scene();
 
-var solarSystem = new SolarSystem();
-scene.add(solarSystem);
+var generateMap = require('./generateMap.js');
+var MapMesh = require('./MapMesh.js');
+var map = generateMap();
+var mapMesh = new MapMesh(map);
 
-var movementIndicator = new MovementIndicator();
-scene.add(movementIndicator);
+scene.add(mapMesh);
 
-var stars = new StarField();
-scene.add(stars);
+//var solarSystem = new SolarSystem();
+//scene.add(solarSystem);
+//var movementIndicator = new MovementIndicator();
+//scene.add(movementIndicator);
+//var stars = new StarField();
+//scene.add(stars);
 
 var axisHelper = new THREE.AxisHelper(10);
 scene.add( axisHelper );
 
-var square = makeSquare();
-scene.add(square);
-square.position.x = -35;
-square.position.z = -35;
+//var square = makeSquare();
+//scene.add(square);
+//square.position.x = -35;
+//square.position.z = -35;
+//
+//var square2 = makeSquare();
+//scene.add(square2);
+//square2.position.x = 55;
+//square2.position.z = 50;
 
-var square2 = makeSquare();
-scene.add(square2);
-square2.position.x = 55;
-square2.position.z = 50;
-
-var selectable = [square, square2];
+//var selectable = [square, square2];
 
 var clock = new THREE.Clock();
 
 var selected = null;
 
-window.solarSystem = solarSystem;
+//window.solarSystem = solarSystem;
 window.camera = camera;
 
-camera.moveToAndLookAt(solarSystem.bodies.Sun);
+//camera.moveToAndLookAt(solarSystem.bodies.Sun);
 
 function click() {
 
   if(mouse.hoverObject) {
     selected = mouse.hoverObject;
-    movementIndicator.visible = true;
-    movementIndicator.snapTo(selected);
+    //movementIndicator.visible = true;
+    //movementIndicator.snapTo(selected);
   } else {
     selected = null;
-    movementIndicator.visible = false;
+    //movementIndicator.visible = false;
   }
 }
 
 function keyDown(key) {
   if (key === KEYBOARD.ESCAPE) {
     selected = null;
-    movementIndicator.visible = false;
+    //movementIndicator.visible = false;
   }
 }
 
@@ -83,14 +90,14 @@ function update(delta) {
 
   controls.update();
 
-  square.lookAt(camera.position);
+  //square.lookAt(camera.position);
 
   mouse.updateRaycaster(camera);
-  mouse.checkHover(selectable);
+  //mouse.checkHover(selectable);
 
   if (selected) {
-    var pos = mouse.getPositionAtY(selected.position.y);
-    movementIndicator.update(pos);
+    //var pos = mouse.getPositionAtY(selected.position.y);
+    //movementIndicator.update(pos);
   }
 }
 

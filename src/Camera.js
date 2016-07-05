@@ -6,7 +6,11 @@ var Camera = function() {
 
   this.baseOffset = new THREE.Vector3(50, 50, 100);
 
-  this.lookAt(new THREE.Vector3());
+  var zero = new THREE.Vector3();
+
+  this.position.copy(zero).add(this.baseOffset);
+
+  this.lookAt(zero);
 
   this.controls = null;
 };
