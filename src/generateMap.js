@@ -4,7 +4,7 @@ var generateMap = function(rng) {
 
   var length = 100;
   var steps = 20;
-  var perStep = 10;
+  var perStep = 250;
   var radius = 3;
   var spreadMax = 5;
   var spreadCurrent = 0;
@@ -18,6 +18,13 @@ var generateMap = function(rng) {
     i, j, point, count,
     current = start.clone();
 
+  function randomisePoint(point, scale) {
+    var angle = rng.random_long() * Math.PI * 2;
+    var r = Math.sqrt(rng.random_long()) * radius;
+    point.x += r * Math.cos(angle) * scale;
+    point.y += r * Math.sin(angle) * scale;
+  }
+
   for(i = 1; i < steps; i++) {
     current.add(step);
     if (i <= steps/2) {
@@ -28,9 +35,7 @@ var generateMap = function(rng) {
     count = parseInt(perStep * spreadCurrent);
     for (j = 0; j < count; j++) {
       point = current.clone();
-      point.y += rng.randomBetween(-radius * spreadCurrent, radius * spreadCurrent);
-      point.x += rng.randomBetween(-radius * spreadCurrent, radius * spreadCurrent);
-      point.z += rng.randomBetween(-radius * spreadCurrent, radius * spreadCurrent);
+      randomisePoint(point, spreadCurrent);
       points.push(point);
     }
   }
