@@ -4,19 +4,17 @@ var MapMesh = function(map) {
 
   THREE.Object3D.call(this);
 
-  var material = new THREE.PointsMaterial({
-    color: 0xFFFFFF,
-    size: 3,
-    sizeAttenuation: false
-  });
+  var ends = makePointCloud([
+    map.start.clone(),
+    map.end.clone()
+  ], 0xFFFFFF, 3);
 
-  var particles = new THREE.Geometry();
+  this.add(ends);
 
-  particles.vertices.push(map.start.clone());
-  particles.vertices.push(map.end.clone());
-
-  var points = new THREE.Points(
-    particles, material
+  var points = makePointCloud(
+    map.points,
+    0xFF00FF,
+    2
   );
 
   this.add(points);
@@ -36,5 +34,23 @@ var MapMesh = function(map) {
 
 MapMesh.prototype = Object.create(THREE.Object3D.prototype);
 MapMesh.prototype.constructor = MapMesh.prototype;
+
+function makePointCloud(points, color, size) {
+
+  var material = new THREE.PointsMaterial({
+    color: color,
+    size: size,
+    sizeAttenuation: false
+  });
+
+  var particles = new THREE.Geometry();
+
+  particles.vertices = points;
+
+  return new THREE.Points(
+    particles, material
+  );
+
+}
 
 module.exports = MapMesh;

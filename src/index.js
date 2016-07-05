@@ -10,19 +10,20 @@ var KEYBOARD = require('./Keyboard.js');
 var MovementIndicator = require('./MovementIndicator.js');
 var makeSquare = require('./mesh/makeSquare.js');
 var SolarSystem = require('./SolarSystem.js');
+var RNG = require('./RNG.js');
 
 var camera = new Camera();
 var controls = new Controls(camera);
 camera.controls = controls;
 
-camera.position.set(180,150,100);
+camera.position.set(90, 75, 50);
 
 var mouse = new Mouse();
 var scene = new THREE.Scene();
 
 var generateMap = require('./generateMap.js');
 var MapMesh = require('./MapMesh.js');
-var map = generateMap();
+var map = generateMap(RNG);
 var mapMesh = new MapMesh(map);
 
 scene.add(mapMesh);
